@@ -3,6 +3,7 @@ import json
 from requests.auth import HTTPBasicAuth
 import hashlib
 import unittest
+import datetime
 
 url = 'https://upload.docs-sandbox.openprocurement.org'
 register_suffix = '/register'
@@ -34,10 +35,13 @@ def upload_document(upload_url):
 class DocumentServiceTest(unittest.TestCase):
 
     def test_register(self):
+        print ("STARTED {}".format(datetime.datetime.now()))
         r = register_document()
         self.assertEqual(r.status_code, 201)
+        print ("PASSED {}".format(datetime.datetime.now()))
 
     def test_upload(self):
+        print ("STARTED {}".format(datetime.datetime.now()))
         register_response = register_document()
         register_json = json.loads(register_response.text)
 
@@ -51,8 +55,10 @@ class DocumentServiceTest(unittest.TestCase):
         )
         self.assertNotIn('errorMessage', upload_json)
         self.assertEqual(upload_json['data']['hash'].split(':')[-1], hash_file())
+        print ("PASSED {}".format(datetime.datetime.now()))
 
     def test_get_document(self):
+        print ("STARTED {}".format(datetime.datetime.now()))
         register_response = register_document()
         register_json = json.loads(register_response.text)
 
@@ -68,8 +74,10 @@ class DocumentServiceTest(unittest.TestCase):
                          msg="Fail To Get Document ({})".format(response_from_get.status_code)
                          )
         self.assertEqual(upload_json['data']['format'], 'text/plain')
+        print ("PASSED {}".format(datetime.datetime.now()))
 
-    def test_upload_no_registartion(self):
+    def test_upload_no_registration(self):
+        print ("STARTED {}".format(datetime.datetime.now()))
         resp_from_upload_service = upload_document(url + '/upload')
         upload_json = json.loads(resp_from_upload_service.text)
 
@@ -78,6 +86,7 @@ class DocumentServiceTest(unittest.TestCase):
                          msg="Fail To Get Document ({})".format(resp_from_upload_service.status_code)
                          )
         self.assertNotIn('errorMessage', upload_json)
+        print ("PASSED {}".format(datetime.datetime.now()))
 
 if __name__ == '__main__':
     unittest.main()
